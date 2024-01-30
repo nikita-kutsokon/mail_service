@@ -23,6 +23,18 @@ const updateContactListById = async (id: string, contactsListData: Prisma.Contac
 };
 
 const deleteContactsListById = async (id: string) => {
+    const list = await prismaClient.contactstList.findUnique({
+        where: { id: id },
+      });
+
+    const updateListsPromises = list.contactIds.map(contactId =>
+        prismaClient.contact.update({
+          where: { id: contactId},
+          data: { lists: { disconnect: { id: id } } }
+        })
+      );
+      await Promise.all(updateListsPromises);
+
     const result = await prismaClient.contactstList.delete({ where: { id } });
     return result;
 };
