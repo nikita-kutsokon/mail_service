@@ -38,7 +38,6 @@ model Contact {
   SentMail           SentMail[]
   ScheduledMail      ScheduledMail[]
   ContactsActions    ContactsActions[]
-  UnsubscribedUsers  UnsubscribedUsers[]
   mailingAutomations ContactMailingAutomation[]
 }
 
@@ -75,25 +74,14 @@ model ContactMailingAutomation {
 model ContactsActions {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  activityDescription String
-  typeOfActivity      TypeOfActivity
+  actionDescription String
   createdAt           DateTime       @default(now()) @db.Date
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 
-  templateId String       @db.ObjectId
-  template   MailTemplate @relation(fields: [templateId], references: [id])
-}
-
-model UnsubscribedUsers {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  activityDescription String
-  createdAt           DateTime @default(now()) @db.Date
-
-  contactId String  @unique @db.ObjectId
-  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  templateId String?       @db.ObjectId
+  template   MailTemplate? @relation(fields: [templateId], references: [id])
 }
 
 // MAILS
@@ -175,11 +163,6 @@ model AutomationScheduledMail {
 enum EmailStatus {
   PENDING
   OPENED
-}
-
-enum TypeOfActivity {
-  EMAIL
-  LINK
 }
 
 enum EduQuestDecision {

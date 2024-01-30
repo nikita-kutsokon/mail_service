@@ -4,7 +4,7 @@ import validateBody from '../../../api/middlewares/request-body-validator';
 import contactsSchema from '../../../api/request-schemas/contacts.request-schemas';
 import { StatusCodes } from 'http-status-codes';
 
-import getContactLocationByIpAddress from '../../detecting-contacts-location/user-location-detector.service';
+import getContactLocationByIpAddress from '../../location-determination-service';
 
 const router = Router()
 
