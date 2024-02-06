@@ -10,6 +10,7 @@ import swaggerSetup from './docs';
 
 import AuthRouter from './api/routes/auth';
 import PublicApiRouter from './api/public-api.router';
+import InfrustructureRouter from './infrustructure/router';
 
 import ContactActionsRouter from './user-actions-system/routes/contact-actions.router';
 
@@ -32,7 +33,8 @@ app.use('/docs', swaggerSetup.serve, swaggerSetup.setup);
 app.use('/api', AuthRouter);
 app.use('/api', PublicApiRouter);
 app.use('/action', ContactActionsRouter)
-app.use("/contact-form-creation", ContactFormCreation)
+app.use(InfrustructureRouter)
+// app.use("/contact-form-creation", ContactFormCreation)
 app.use('/action', ContactActionsRouter);
 
 

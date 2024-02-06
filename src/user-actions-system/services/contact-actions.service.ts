@@ -3,25 +3,25 @@ import descriptionGenerator from '../helpers/descriptionCreator';
 import { ContactsActions } from "@prisma/client";
 
 const emailOpenTracking = async (emailId: string) => {
-    const {contactId, templateId} = await prismaClient.sentMail.update({
-        where: {
-            emailId
-        },
-        data: {
-            emailStatus: "OPENED"
-        }
-    })
+    // const {contactId, templateId} = await prismaClient.sentMail.update({
+    //     where: {
+    //         emailId
+    //     },
+    //     data: {
+    //         emailStatus: "OPENED"
+    //     }
+    // })
 
-    const activityDescription = await descriptionGenerator.generateDescriptionForEmailsActions(templateId)
+    // const activityDescription = await descriptionGenerator.generateDescriptionForEmailsActions(templateId)
 
-    await prismaClient.contactsActions.create({
-        data: {
-            contactId,
-            typeOfActivity: "EMAIL",
-            templateId,
-            activityDescription
-        }
-    })
+    // await prismaClient.contactsActions.create({
+    //     data: {
+    //         contactId,
+    //         typeOfActivity: "EMAIL",
+    //         templateId,
+    //         activityDescription
+    //     }
+    // })
 }
 
 const emailLinkTracking = async (emailId: string, linkName: string) => {
@@ -32,14 +32,14 @@ const emailLinkTracking = async (emailId: string, linkName: string) => {
     })
     const activityDescription = await descriptionGenerator.generateDescriptionForLinksActions(templateId, linkName)
 
-    await prismaClient.contactsActions.create({
-        data: {
-            contactId,
-            typeOfActivity: "LINK",
-            templateId,
-            activityDescription
-        }
-    })
+    // await prismaClient.contactsActions.create({
+    //     data: {
+    //         contactId,
+    //         typeOfActivity: "LINK",
+    //         templateId,
+    //         activityDescription
+    //     }
+    // })
 }
 
 const unsubscribe = async (id: string) => {
@@ -52,16 +52,16 @@ const unsubscribe = async (id: string) => {
         }
     })
 
-    await prismaClient.unsubscribedUsers.create({
-        data: {
-            contactId: id,
-            activityDescription: 'User has unsubscribed'
-        }
-    })
+    // await prismaClient.unsubscribedUsers.create({
+    //     data: {
+    //         contactId: id,
+    //         activityDescription: 'User has unsubscribed'
+    //     }
+    // })
 }
 
 const unsubscribedContactsList = async () => {
-    return await prismaClient.unsubscribedUsers.findMany({})
+    // return await prismaClient.unsubscribedUsers.findMany({})
 }
 
 const subscribe = async (id: string) => {
@@ -74,11 +74,11 @@ const subscribe = async (id: string) => {
         }
     })
 
-    await prismaClient.unsubscribedUsers.delete({
-        where: {
-            contactId: id
-        }
-    })
+    // await prismaClient.unsubscribedUsers.delete({
+    //     where: {
+    //         contactId: id
+    //     }
+    // })
 }
 
 export default {

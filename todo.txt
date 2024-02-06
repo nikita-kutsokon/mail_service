@@ -1,0 +1,3 @@
+Intakes API 
+1. Make eventdata as unique (change creation service)
+2. Rename field scheduledDate -> sentedDate in SentMail model

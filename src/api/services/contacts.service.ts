@@ -149,11 +149,11 @@ const batchDeletingContacts = async (deletingData: { contactIds: string[] }) => 
 };
 
 const getContactActions = async (contactId: string, typeOfActivity: string | null) => {
-    const objectQuery = typeOfActivity ? { contactId, typeOfActivity: { equals: typeOfActivity as ContactsActions["typeOfActivity"] } } : { contactId };
+    // const objectQuery = typeOfActivity ? { contactId, typeOfActivity: { equals: typeOfActivity as ContactsActions["typeOfActivity"] } } : { contactId };
 
-    return await prismaClient.contactsActions.findMany({
-        where: objectQuery
-    })
+    // return await prismaClient.contactsActions.findMany({
+    //     where: objectQuery
+    // })
 }
 
 export default{

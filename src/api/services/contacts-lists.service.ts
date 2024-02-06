@@ -72,7 +72,9 @@ const addContacListToMailingAutomation = async (listId: string, mailingAutomatio
         mailingAutomationId
     }));
     
-    await prismaClient.contactMailingAutomation.createMany({ data: connectData });
+    const result = await prismaClient.contactMailingAutomation.createMany({ data: connectData });
+
+    return result;
 };
 
 export default {

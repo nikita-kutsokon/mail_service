@@ -28,6 +28,12 @@ router.put(
     ContactsListsController.updateContactListById
 );
 
+router.post(
+    '/:id/add-to-automation/:automationId', 
+    isValidId,
+    ContactsListsController.addContacListToMailingAutomation
+)
+
 router.delete(
     '/:id',
     isValidId,

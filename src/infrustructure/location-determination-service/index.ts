@@ -5,10 +5,12 @@ interface LocationData {
 }
 
 const getContactLocationByIpAddress = async (ip: string): Promise<LocationData | undefined> => {
+    console.log('start defenition location with ip', ip);
     if (!ip) return undefined;
-
+    
     try {
         const response = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.LOCATION_API_KEY}&ip=${ip}`);
+        console.log(response);
         const { city, country_name, time_zone } = await response.json();
 
         return {
@@ -22,4 +24,6 @@ const getContactLocationByIpAddress = async (ip: string): Promise<LocationData |
     }
 };
 
-export default getContactLocationByIpAddress;
+export default {
+    getContactLocationByIpAddress
+};

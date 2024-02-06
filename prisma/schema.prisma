@@ -7,6 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Intake {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  eventDate                    DateTime @unique @db.Date
+  orientationEventDateTime     DateTime @db.Date
+  firstInternshipClassDateTime DateTime @db.Date
+  applicationDeadline          DateTime @db.Date
+
+  programType InternShipProgramType
+  status      IntakeStatus          @default(CLOSED)
+
+  contactsList ContactstList?
+}
+
 model Contact {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   firstName String
@@ -26,6 +40,7 @@ model Contact {
   eduQuestSelectedDateTime DateTime?
   eduQuestDecision         EduQuestDecision?
 
+  ipAddress                  String?
   birthDate                  DateTime @db.Date
   isSubscribed               Boolean  @default(true)
   isEqParticipationConfirmed Boolean  @default(false)
@@ -35,9 +50,12 @@ model Contact {
   listIds String[]        @db.ObjectId
   lists   ContactstList[] @relation(fields: [listIds], references: [id])
 
-  SentMail           SentMail[]
-  ScheduledMail      ScheduledMail[]
-  ContactsActions    ContactsActions[]
+  SentMail                  SentMail[]
+  ScheduledMail             ScheduledMail[]
+  ContactsActions           ContactsActions[]
+  BlockedContactsLists      BlockedContactsList?
+  FutureEqDatesContactsList FutureEqDatesContactsList?
+
   mailingAutomations ContactMailingAutomation[]
 }
 
@@ -54,6 +72,9 @@ model ContactstList {
   name              String    @unique
   eduQuestStartDate DateTime? @unique
   createdAt         DateTime  @default(now()) @db.Date
+
+  intakeId String? @unique @db.ObjectId
+  intake   Intake? @relation(fields: [intakeId], references: [id])
 
   contactIds String[]  @db.ObjectId
   contacts   Contact[] @relation(fields: [contactIds], references: [id])
@@ -75,7 +96,7 @@ model ContactsActions {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   actionDescription String
-  createdAt           DateTime       @default(now()) @db.Date
+  createdAt         DateTime @default(now()) @db.Date
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
@@ -104,9 +125,8 @@ model ScheduledMail {
 model SentMail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  emailId       String       @unique
-  scheduledDate DateTime     @db.Date
-  emailStatus   EmailStatus? @default(PENDING)
+  emailId  String   @unique
+  sentDate DateTime @default(now()) @db.Date
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
@@ -159,12 +179,27 @@ model AutomationScheduledMail {
   mailingAutomation   MailingAutomation @relation(fields: [mailingAutomationId], references: [id], onDelete: Cascade)
 }
 
-// ENUMS
-enum EmailStatus {
-  PENDING
-  OPENED
+model BlockedContactsList {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  reasonOfBlocking String
+
+  createdAt DateTime @default(now()) @db.Date
 }
 
+model FutureEqDatesContactsList {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Date
+}
+
+// ENUMS
 enum EduQuestDecision {
   SELECTED
   TRY_AGAIN
@@ -177,4 +212,14 @@ enum EduQuestDecision {
   POOR_INTERNET_CONNECTION
 
   WE_MISSED_YOU
+}
+
+enum InternShipProgramType {
+  WEEKDAY
+  WEEKEND
+}
+
+enum IntakeStatus {
+  CLOSED
+  OPENED
 }

@@ -4,7 +4,7 @@ import validateBody from '../../../api/middlewares/request-body-validator';
 import contactsSchema from '../../../api/request-schemas/contacts.request-schemas';
 import { StatusCodes } from 'http-status-codes';
 
-import getContactLocationByIpAddress from '../../location-determination-service';
+import { getLocationByIpAddress } from '../../../user-actions-system/services/contactLocation.service';
 
 const router = Router()
 
@@ -13,7 +13,7 @@ router.post("/", validateBody(contactsSchema.createResourseFormSubmitionForm), a
         const contactData = req.body;
         const userIpAddress = ((req.headers['x-forwarded-for'] as string) || '').split(',')[0].trim() || req.socket.remoteAddress;
     
-        const userLocation = await getContactLocationByIpAddress(userIpAddress);
+        const userLocation = await getLocationByIpAddress(userIpAddress);
         
         if (userLocation && (userLocation.country === 'Russia' || userLocation.country === 'Belarus')) {
             return res.status(StatusCodes.FORBIDDEN).json('It is not possible to create a contact from Russia or Belarus').end();
