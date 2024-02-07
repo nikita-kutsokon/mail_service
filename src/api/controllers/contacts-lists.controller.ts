@@ -27,10 +27,11 @@ const deleteContactsListById = async (req: Request, res: Response) => {
 };
 
 const getListContactsLists = async (req: Request, res: Response) => {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortOrder } = req.query;
     const result = await ContactsListsService.getListContactsLists({ 
         page: Number(page) || 1, 
-        pageSize: Number(pageSize) || 10
+        pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     }); 
 
     res.status(StatusCodes.OK).json(result)

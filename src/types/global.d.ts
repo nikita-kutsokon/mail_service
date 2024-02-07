@@ -1,4 +1,4 @@
-import { Users } from "@prisma/client";
+import { Prisma, Users } from "@prisma/client";
 
 export {};
 
@@ -7,6 +7,7 @@ declare global {
         page?: number;
         pageSize?: number;
         search?: string;
+        sortOrder?: Prisma.SortOrder;
     }
 
     interface HttpErrorResponse {

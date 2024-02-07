@@ -52,12 +52,15 @@ const updateMailTemplateDataById = async (id: string, data: string) => {
 };
 
 const getMailTemplatesList = async (filteringParams: ApiResourceFilteringParams) => {
-    const { page, pageSize } = filteringParams;
+    const { page, pageSize, sortOrder } = filteringParams;
     const skip = (page - 1) * pageSize;
 
     const databaseResult = await prismaClient.mailTemplate.findMany({
         skip,
-        take: pageSize
+        take: pageSize,
+        orderBy: {
+            createdAt: sortOrder
+        }
     });
 
     return databaseResult;

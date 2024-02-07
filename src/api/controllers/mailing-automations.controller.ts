@@ -38,12 +38,13 @@ const getMailingAutomationById = async (req: Request, res: Response) => {
 };
 
 const getMailingAutomationsList = async (req: Request, res: Response) => {
-    const { search, page, pageSize } = req.query as ApiResourceFilteringParams;
+    const { search, page, pageSize, sortOrder } = req.query as ApiResourceFilteringParams;
 
     const mailingAutomationsList = await MailingAutomationsService.getMailingAutomationsList({ 
         search: search || '',
         page: Number(page) || 1, 
         pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     });
 
     res.status(StatusCodes.OK).json(mailingAutomationsList);

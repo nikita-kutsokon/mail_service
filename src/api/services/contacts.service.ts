@@ -61,7 +61,7 @@ const getContactById = async (id:string)=>{
 };
 
 const getContactList = async (filteringParams: ContactsFilteringParams) => {
-    const { search, page, pageSize, listIds } = filteringParams;
+    const { search, page, pageSize, sortOrder, listIds } = filteringParams;
     const skip = (page - 1) * pageSize;
 
     const conditions = [];
@@ -87,7 +87,10 @@ const getContactList = async (filteringParams: ContactsFilteringParams) => {
     const contacts = await prismaClient.contact.findMany({
         skip,
         take: pageSize,
-        where: whereCondition
+        where: whereCondition,
+        orderBy: {
+            createdAt: sortOrder
+        }
     });
 
     const contactsCount = await prismaClient.contact.count({

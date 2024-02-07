@@ -20,12 +20,13 @@ const getRecordById = async (req: Request, res: Response) => {
 };
 
 const getRecordsList = async (req: Request, res: Response) => {
-    const { page, pageSize, status } = req.query;
+    const { page, pageSize, sortOrder, status } = req.query;
 
     const targetRecords = await IntakeService.getRecordsList({ 
         status: status as IntakeStatus || undefined,
         page: Number(page) || 1, 
         pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc',
     });
 
     res.status(StatusCodes.OK).json(targetRecords);

@@ -14,6 +14,7 @@ model Intake {
   orientationEventDateTime     DateTime @db.Date
   firstInternshipClassDateTime DateTime @db.Date
   applicationDeadline          DateTime @db.Date
+  createdAt                    DateTime @default(now()) @db.Date
 
   programType InternShipProgramType
   status      IntakeStatus          @default(CLOSED)
@@ -148,13 +149,6 @@ model MailTemplate {
   AutomationScheduledMails AutomationScheduledMail[]
 }
 
-model ContactDataPlacehodelr {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  contactFieldName String
-  placeholderTag   String
-}
-
 // MAILING AUTOMATIONS 
 model MailingAutomation {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -164,6 +158,8 @@ model MailingAutomation {
   scheduledMails           ScheduledMail[]
   automationScheduledMails AutomationScheduledMail[]
   contacts                 ContactMailingAutomation[]
+
+  createdAt DateTime @default(now()) @db.Date
 }
 
 model AutomationScheduledMail {
