@@ -23,10 +23,11 @@ const deleteContactsListById = async (req, res) => {
     res.status(http_status_codes_1.StatusCodes.NO_CONTENT).json(result);
 };
 const getListContactsLists = async (req, res) => {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortOrder } = req.query;
     const result = await contacts_lists_service_1.default.getListContactsLists({
         page: Number(page) || 1,
-        pageSize: Number(pageSize) || 10
+        pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     });
     res.status(http_status_codes_1.StatusCodes.OK).json(result);
 };

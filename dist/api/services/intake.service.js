@@ -35,13 +35,16 @@ const getRecordById = async (id) => {
     return targetRecord;
 };
 const getRecordsList = async (filteringParams) => {
-    const { page, pageSize, status } = filteringParams;
+    const { page, pageSize, sortOrder, status } = filteringParams;
     const skip = (page - 1) * pageSize;
     const records = await prisma_client_1.default.intake.findMany({
         skip,
         take: pageSize,
         where: {
             status: status || undefined
+        },
+        orderBy: {
+            createdAt: sortOrder
         }
     });
     return {

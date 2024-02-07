@@ -16,11 +16,12 @@ const getRecordById = async (req, res) => {
     res.status(http_status_codes_1.StatusCodes.OK).json(targetRecordData);
 };
 const getRecordsList = async (req, res) => {
-    const { page, pageSize, status } = req.query;
+    const { page, pageSize, sortOrder, status } = req.query;
     const targetRecords = await intake_service_1.default.getRecordsList({
         status: status || undefined,
         page: Number(page) || 1,
         pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc',
     });
     res.status(http_status_codes_1.StatusCodes.OK).json(targetRecords);
 };

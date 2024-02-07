@@ -64,7 +64,7 @@ const getMailingAutomationById = async (id) => {
     return result;
 };
 const getMailingAutomationsList = async (filteringParams) => {
-    const { search, page, pageSize } = filteringParams;
+    const { search, page, pageSize, sortOrder } = filteringParams;
     const skip = (page - 1) * pageSize;
     const result = await prisma_client_1.default.mailingAutomation.findMany({
         skip,
@@ -80,6 +80,9 @@ const getMailingAutomationsList = async (filteringParams) => {
                     template: true
                 }
             }
+        },
+        orderBy: {
+            createdAt: sortOrder
         }
     });
     return result;
