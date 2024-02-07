@@ -40,4 +40,10 @@ router.delete(
     IntakeController.delteRecordById
 );
 
+router.get(
+    '/:id/country-source-stats',
+    isValidId,
+    IntakeController.getCountrySourceStats
+);
+
 export default router;

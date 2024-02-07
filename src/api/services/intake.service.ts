@@ -64,10 +64,45 @@ const getRecordsList = async (filteringParams: IntakeListFilteringParams) => {
     };
 };
 
+const getCountrySourceStats = async (id: string) => {
+    const targetContactList = await prismaClient.contactstList.findUnique({ where: { intakeId: id } });    
+
+    const result = await prismaClient.contact.groupBy({
+        by: ['country', 'sourceOfReferral'], 
+        where: { 
+            listIds: { has: targetContactList.id } 
+        },
+        _count: {
+            _all: true
+        }
+    });
+
+    const transformedResult = result.reduce((acc, curr) => {
+        const countryName = curr.country;
+        const sourceName = curr.sourceOfReferral;
+        const countOfInterns = curr._count._all;
+
+        if (!acc[countryName]) {
+            acc[countryName] = {
+                referalSources: {},
+                internsCount: 0
+            };
+        }
+
+        acc[countryName].referalSources[sourceName] = countOfInterns;
+        acc[countryName].internsCount += countOfInterns;
+
+        return acc;
+    }, {});
+
+    return transformedResult;
+};
+
 export default {
     createRecord,
     getRecordById,
     getRecordsList,
     delteRecordById,
     updateRecordById,
-}
+    getCountrySourceStats
+};

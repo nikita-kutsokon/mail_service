@@ -47,10 +47,19 @@ const updateRecordById = async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json(updatingResult);
 };
 
+const getCountrySourceStats = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    const result = await IntakeService.getCountrySourceStats(id);
+
+    res.status(StatusCodes.OK).json(result);
+};
+
 export default {
     createRecord,
     getRecordById,
     getRecordsList,
     delteRecordById,
     updateRecordById,
+    getCountrySourceStats
 }
