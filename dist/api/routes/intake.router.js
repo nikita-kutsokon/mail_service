@@ -14,5 +14,6 @@ router.post('/', (0, request_body_validator_1.default)(intake_request_schemas_1.
 router.get('/:id', request_id_validator_middleware_1.default, intake_controller_1.default.getRecordById);
 router.put('/:id', request_id_validator_middleware_1.default, (0, request_body_validator_1.default)(intake_request_schemas_1.default.updateResource), intake_controller_1.default.updateRecordById);
 router.delete('/:id', request_id_validator_middleware_1.default, intake_controller_1.default.delteRecordById);
+router.get('/:id/country-source-stats', request_id_validator_middleware_1.default, intake_controller_1.default.getCountrySourceStats);
 exports.default = router;
 //# sourceMappingURL=intake.router.js.map

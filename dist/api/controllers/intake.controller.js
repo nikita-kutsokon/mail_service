@@ -35,11 +35,17 @@ const updateRecordById = async (req, res) => {
     const updatingResult = await intake_service_1.default.updateRecordById(id, newRecordData);
     res.status(http_status_codes_1.StatusCodes.OK).json(updatingResult);
 };
+const getCountrySourceStats = async (req, res) => {
+    const id = req.params.id;
+    const result = await intake_service_1.default.getCountrySourceStats(id);
+    res.status(http_status_codes_1.StatusCodes.OK).json(result);
+};
 exports.default = {
     createRecord,
     getRecordById,
     getRecordsList,
     delteRecordById,
     updateRecordById,
+    getCountrySourceStats
 };
 //# sourceMappingURL=intake.controller.js.map
