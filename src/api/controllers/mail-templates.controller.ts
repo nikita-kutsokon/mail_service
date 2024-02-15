@@ -36,10 +36,11 @@ const deleteMailTemplateById = async (req: Request, res: Response) => {
 };
 
 const getMailTemplatesList = async (req: Request, res: Response) => {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortOrder } = req.query;
     const result = await MailTemplatesService.getMailTemplatesList({ 
         page: Number(page) || 1, 
-        pageSize: Number(pageSize) || 10
+        pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     });    
 
     res.status(StatusCodes.OK).json(result);

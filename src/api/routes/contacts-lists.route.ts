@@ -28,6 +28,16 @@ router.put(
     ContactsListsController.updateContactListById
 );
 
+router.post(
+    '/add-to-automation', 
+    ContactsListsController.addContacListToMailingAutomation
+);
+
+router.post(
+    '/:id/sync-members-eq-date', 
+    ContactsListsController.addContacListToMailingAutomation
+)
+
 router.delete(
     '/:id',
     isValidId,

@@ -7,6 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Intake {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  eventDate                    DateTime @unique @db.Date
+  orientationEventDateTime     DateTime @db.Date
+  firstInternshipClassDateTime DateTime @db.Date
+  applicationDeadline          DateTime @db.Date
+  createdAt                    DateTime @default(now()) @db.Date
+
+  programType InternShipProgramType
+  status      IntakeStatus          @default(CLOSED)
+
+  contactsList ContactstList?
+}
+
 model Contact {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   firstName String
@@ -26,6 +41,7 @@ model Contact {
   eduQuestSelectedDateTime DateTime?
   eduQuestDecision         EduQuestDecision?
 
+  ipAddress                  String?
   birthDate                  DateTime @db.Date
   isSubscribed               Boolean  @default(true)
   isEqParticipationConfirmed Boolean  @default(false)
@@ -35,10 +51,12 @@ model Contact {
   listIds String[]        @db.ObjectId
   lists   ContactstList[] @relation(fields: [listIds], references: [id])
 
-  SentMail           SentMail[]
-  ScheduledMail      ScheduledMail[]
-  ContactsActions    ContactsActions[]
-  UnsubscribedUsers  UnsubscribedUsers[]
+  SentMail                  SentMail[]
+  ScheduledMail             ScheduledMail[]
+  ContactsActions           ContactsActions[]
+  BlockedContactsLists      BlockedContactsList?
+  FutureEqDatesContactsList FutureEqDatesContactsList?
+
   mailingAutomations ContactMailingAutomation[]
 }
 
@@ -55,6 +73,9 @@ model ContactstList {
   name              String    @unique
   eduQuestStartDate DateTime? @unique
   createdAt         DateTime  @default(now()) @db.Date
+
+  intakeId String? @unique @db.ObjectId
+  intake   Intake? @relation(fields: [intakeId], references: [id])
 
   contactIds String[]  @db.ObjectId
   contacts   Contact[] @relation(fields: [contactIds], references: [id])
@@ -75,25 +96,14 @@ model ContactMailingAutomation {
 model ContactsActions {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  activityDescription String
-  typeOfActivity      TypeOfActivity
-  createdAt           DateTime       @default(now()) @db.Date
+  actionDescription String
+  createdAt         DateTime @default(now()) @db.Date
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id])
 
-  templateId String       @db.ObjectId
-  template   MailTemplate @relation(fields: [templateId], references: [id])
-}
-
-model UnsubscribedUsers {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  activityDescription String
-  createdAt           DateTime @default(now()) @db.Date
-
-  contactId String  @unique @db.ObjectId
-  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  templateId String?       @db.ObjectId
+  template   MailTemplate? @relation(fields: [templateId], references: [id])
 }
 
 // MAILS
@@ -116,9 +126,8 @@ model ScheduledMail {
 model SentMail {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  emailId       String       @unique
-  scheduledDate DateTime     @db.Date
-  emailStatus   EmailStatus? @default(PENDING)
+  emailId  String   @unique
+  sentDate DateTime @default(now()) @db.Date
 
   contactId String  @db.ObjectId
   contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
@@ -140,13 +149,6 @@ model MailTemplate {
   AutomationScheduledMails AutomationScheduledMail[]
 }
 
-model ContactDataPlacehodelr {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  contactFieldName String
-  placeholderTag   String
-}
-
 // MAILING AUTOMATIONS 
 model MailingAutomation {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -156,6 +158,8 @@ model MailingAutomation {
   scheduledMails           ScheduledMail[]
   automationScheduledMails AutomationScheduledMail[]
   contacts                 ContactMailingAutomation[]
+
+  createdAt DateTime @default(now()) @db.Date
 }
 
 model AutomationScheduledMail {
@@ -171,17 +175,27 @@ model AutomationScheduledMail {
   mailingAutomation   MailingAutomation @relation(fields: [mailingAutomationId], references: [id], onDelete: Cascade)
 }
 
+model BlockedContactsList {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  reasonOfBlocking String
+
+  createdAt DateTime @default(now()) @db.Date
+}
+
+model FutureEqDatesContactsList {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  contactId String  @unique @db.ObjectId
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Date
+}
+
 // ENUMS
-enum EmailStatus {
-  PENDING
-  OPENED
-}
-
-enum TypeOfActivity {
-  EMAIL
-  LINK
-}
-
 enum EduQuestDecision {
   SELECTED
   TRY_AGAIN
@@ -194,4 +208,14 @@ enum EduQuestDecision {
   POOR_INTERNET_CONNECTION
 
   WE_MISSED_YOU
+}
+
+enum InternShipProgramType {
+  WEEKDAY
+  WEEKEND
+}
+
+enum IntakeStatus {
+  CLOSED
+  OPENED
 }

@@ -2,7 +2,7 @@ import { FileArray, UploadedFile } from 'express-fileupload';
 
 import prismaClient from '../../database/prisma-client';
 import BaseApiError from '../../utils/http-errors';
-import GoogleDriveMaiTemplatesService from '../../infrustructure/services/google-services/mail-templates.driver-service';
+import GoogleDriveMaiTemplatesService from '../../infrustructure/google-services/google-drive/services/mail-templates.google-service';
 
 
 const getMailTemplateDataById = async (id: string) => {
@@ -52,12 +52,15 @@ const updateMailTemplateDataById = async (id: string, data: string) => {
 };
 
 const getMailTemplatesList = async (filteringParams: ApiResourceFilteringParams) => {
-    const { page, pageSize } = filteringParams;
+    const { page, pageSize, sortOrder } = filteringParams;
     const skip = (page - 1) * pageSize;
 
     const databaseResult = await prismaClient.mailTemplate.findMany({
         skip,
-        take: pageSize
+        take: pageSize,
+        orderBy: {
+            createdAt: sortOrder
+        }
     });
 
     return databaseResult;

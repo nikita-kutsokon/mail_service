@@ -42,12 +42,13 @@ const updateContactById= async(req:Request,res:Response)=>{
 };
 
 const getContactList = async (req: Request, res: Response) => {
-    const { search, page, pageSize, listIds } = req.query;
+    const { search, page, pageSize, sortOrder, listIds } = req.query;
 
     const result = await ContactService.getContactList({ 
         search: search as string || '',
         page: Number(page) || 1, 
         pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc',
         listIds: Array.isArray(listIds) ? listIds as string[] : (typeof listIds === 'string' ? [listIds] : [])
     });
 

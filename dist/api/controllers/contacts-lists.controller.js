@@ -23,17 +23,29 @@ const deleteContactsListById = async (req, res) => {
     res.status(http_status_codes_1.StatusCodes.NO_CONTENT).json(result);
 };
 const getListContactsLists = async (req, res) => {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortOrder } = req.query;
     const result = await contacts_lists_service_1.default.getListContactsLists({
         page: Number(page) || 1,
-        pageSize: Number(pageSize) || 10
+        pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     });
+    res.status(http_status_codes_1.StatusCodes.OK).json(result);
+};
+const addContacListToMailingAutomation = async (req, res) => {
+    const { listId, mailingAutomationId } = req.body;
+    const result = await contacts_lists_service_1.default.addContacListToMailingAutomation(listId, mailingAutomationId);
+    res.status(http_status_codes_1.StatusCodes.OK).json(result);
+};
+const syncMembersEqDate = async (req, res) => {
+    const id = req.params.id;
+    const result = await contacts_lists_service_1.default.syncMembersEqDate(id);
     res.status(http_status_codes_1.StatusCodes.OK).json(result);
 };
 exports.default = {
     createContactsList: (0, exception_interceptor_middleware_1.default)(createContactsList),
     updateContactListById: (0, exception_interceptor_middleware_1.default)(updateContactListById),
     deleteContactsListById: (0, exception_interceptor_middleware_1.default)(deleteContactsListById),
-    getListContactsLists: (0, exception_interceptor_middleware_1.default)(getListContactsLists)
+    getListContactsLists: (0, exception_interceptor_middleware_1.default)(getListContactsLists),
+    addContacListToMailingAutomation: (0, exception_interceptor_middleware_1.default)(addContacListToMailingAutomation)
 };
 //# sourceMappingURL=contacts-lists.controller.js.map

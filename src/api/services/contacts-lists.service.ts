@@ -1,6 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prismaClient from '../../database/prisma-client';
 
+import generateEqTimestampFieldBasedOnEqSelectedDate from '../../utils/helpers/dynamic-fields-generators/timestamp.generator';
+
 
 const createContactsList = async (contactListData: Prisma.ContactstListCreateInput) => {
     const result = await prismaClient.contactstList.create({ data: contactListData });
@@ -40,7 +42,7 @@ const deleteContactsListById = async (id: string) => {
 };
 
 const getListContactsLists = async (filteringParams: ApiResourceFilteringParams) => {
-    const { page, pageSize } = filteringParams;
+    const { page, pageSize, sortOrder } = filteringParams;
     const skip = (page - 1) * pageSize;
 
     const listOfContactsLists = await prismaClient.contactstList.findMany({
@@ -48,6 +50,9 @@ const getListContactsLists = async (filteringParams: ApiResourceFilteringParams)
         take: pageSize,
         include: {
             contacts: true
+        },
+        orderBy: {
+            createdAt: sortOrder
         }
     });
 
@@ -84,7 +89,27 @@ const addContacListToMailingAutomation = async (listId: string, mailingAutomatio
         mailingAutomationId
     }));
     
-    await prismaClient.contactMailingAutomation.createMany({ data: connectData });
+    const result = await prismaClient.contactMailingAutomation.createMany({ data: connectData });
+
+    return result;
+};
+
+const syncMembersEqDate = async (listId: string) => {
+    const { contactIds, eduQuestStartDate: listEqData } = await prismaClient.contactstList.findUnique({ where: { id: listId } });
+
+    const contactData = await prismaClient.contact.findMany({ where: { id: { in: contactIds } } });
+
+    const recordsToUpdate = contactData.map(targetContactData => ({
+        where: { id: targetContactData.id },
+        data: {
+            eduQuestSelectedDateTime: listEqData,
+            eduQuestEventTimestamp: generateEqTimestampFieldBasedOnEqSelectedDate(targetContactData)
+        }
+    }));
+
+    const result = await prismaClient.contact.updateMany({ data: recordsToUpdate });
+
+    return result;
 };
 
 export default {
@@ -92,5 +117,6 @@ export default {
     updateContactListById,
     deleteContactsListById,
     getListContactsLists,
-    addContacListToMailingAutomation
+    addContacListToMailingAutomation,
+    syncMembersEqDate
 };

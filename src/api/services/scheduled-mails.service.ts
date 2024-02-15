@@ -49,6 +49,20 @@ const getMailsList = async () => {
     return result;
 };
 
+const getPendingMails = async () => {
+    const currentDateTimeUTC = moment.utc().toDate();
+    
+    const pendingMails = await prismaClient.scheduledMail.findMany({
+        where: {
+            scheduledDate: {
+                lt: currentDateTimeUTC
+            }
+        }
+    });
+
+    return pendingMails;
+};
+
 
 export default {
     createMails,
@@ -56,4 +70,5 @@ export default {
     deleteMailById,
     updateMailById,
     getMailsList,
+    getPendingMails
 };

@@ -50,7 +50,7 @@ const getContactById = async (id) => {
     return result;
 };
 const getContactList = async (filteringParams) => {
-    const { search, page, pageSize, listIds } = filteringParams;
+    const { search, page, pageSize, sortOrder, listIds } = filteringParams;
     const skip = (page - 1) * pageSize;
     const conditions = [];
     if (search) {
@@ -71,7 +71,10 @@ const getContactList = async (filteringParams) => {
     const contacts = await prisma_client_1.default.contact.findMany({
         skip,
         take: pageSize,
-        where: whereCondition
+        where: whereCondition,
+        orderBy: {
+            createdAt: sortOrder
+        }
     });
     const contactsCount = await prisma_client_1.default.contact.count({
         where: whereCondition,
@@ -119,10 +122,10 @@ const batchDeletingContacts = async (deletingData) => {
     return result;
 };
 const getContactActions = async (contactId, typeOfActivity) => {
-    const objectQuery = typeOfActivity ? { contactId, typeOfActivity: { equals: typeOfActivity } } : { contactId };
-    return await prisma_client_1.default.contactsActions.findMany({
-        where: objectQuery
-    });
+    // const objectQuery = typeOfActivity ? { contactId, typeOfActivity: { equals: typeOfActivity as ContactsActions["typeOfActivity"] } } : { contactId };
+    // return await prismaClient.contactsActions.findMany({
+    //     where: objectQuery
+    // })
 };
 exports.default = {
     createContact,

@@ -10,7 +10,13 @@ const updateResourseSchema = Joi.object({
   eduQuestStartDate: Joi.date().iso(),
 });
 
+const addRecordContactsToMailingAutomationSchema = Joi.object({
+  listId: Joi.string().required(),
+  mailingAutomationId: Joi.string().required()
+});
+
 export default {
   createResourseSchema,
-  updateResourseSchema
+  updateResourseSchema,
+  addRecordContactsToMailingAutomationSchema
 }

@@ -6,23 +6,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prisma_client_1 = __importDefault(require("../../database/prisma-client"));
 const descriptionCreator_1 = __importDefault(require("../helpers/descriptionCreator"));
 const emailOpenTracking = async (emailId) => {
-    const { contactId, templateId } = await prisma_client_1.default.sentMail.update({
-        where: {
-            emailId
-        },
-        data: {
-            emailStatus: "OPENED"
-        }
-    });
-    const activityDescription = await descriptionCreator_1.default.generateDescriptionForEmailsActions(templateId);
-    await prisma_client_1.default.contactsActions.create({
-        data: {
-            contactId,
-            typeOfActivity: "EMAIL",
-            templateId,
-            activityDescription
-        }
-    });
+    // const {contactId, templateId} = await prismaClient.sentMail.update({
+    //     where: {
+    //         emailId
+    //     },
+    //     data: {
+    //         emailStatus: "OPENED"
+    //     }
+    // })
+    // const activityDescription = await descriptionGenerator.generateDescriptionForEmailsActions(templateId)
+    // await prismaClient.contactsActions.create({
+    //     data: {
+    //         contactId,
+    //         typeOfActivity: "EMAIL",
+    //         templateId,
+    //         activityDescription
+    //     }
+    // })
 };
 const emailLinkTracking = async (emailId, linkName) => {
     const { templateId, contactId } = await prisma_client_1.default.sentMail.findUnique({
@@ -31,14 +31,14 @@ const emailLinkTracking = async (emailId, linkName) => {
         }
     });
     const activityDescription = await descriptionCreator_1.default.generateDescriptionForLinksActions(templateId, linkName);
-    await prisma_client_1.default.contactsActions.create({
-        data: {
-            contactId,
-            typeOfActivity: "LINK",
-            templateId,
-            activityDescription
-        }
-    });
+    // await prismaClient.contactsActions.create({
+    //     data: {
+    //         contactId,
+    //         typeOfActivity: "LINK",
+    //         templateId,
+    //         activityDescription
+    //     }
+    // })
 };
 const unsubscribe = async (id) => {
     await prisma_client_1.default.contact.update({
@@ -49,15 +49,15 @@ const unsubscribe = async (id) => {
             isSubscribed: false
         }
     });
-    await prisma_client_1.default.unsubscribedUsers.create({
-        data: {
-            contactId: id,
-            activityDescription: 'User has unsubscribed'
-        }
-    });
+    // await prismaClient.unsubscribedUsers.create({
+    //     data: {
+    //         contactId: id,
+    //         activityDescription: 'User has unsubscribed'
+    //     }
+    // })
 };
 const unsubscribedContactsList = async () => {
-    return await prisma_client_1.default.unsubscribedUsers.findMany({});
+    // return await prismaClient.unsubscribedUsers.findMany({})
 };
 const subscribe = async (id) => {
     await prisma_client_1.default.contact.update({
@@ -68,11 +68,11 @@ const subscribe = async (id) => {
             isSubscribed: true
         }
     });
-    await prisma_client_1.default.unsubscribedUsers.delete({
-        where: {
-            contactId: id
-        }
-    });
+    // await prismaClient.unsubscribedUsers.delete({
+    //     where: {
+    //         contactId: id
+    //     }
+    // })
 };
 exports.default = {
     emailLinkTracking,

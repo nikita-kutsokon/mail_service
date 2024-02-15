@@ -27,18 +27,36 @@ const deleteContactsListById = async (req: Request, res: Response) => {
 };
 
 const getListContactsLists = async (req: Request, res: Response) => {
-    const { page, pageSize } = req.query;
+    const { page, pageSize, sortOrder } = req.query;
     const result = await ContactsListsService.getListContactsLists({ 
         page: Number(page) || 1, 
-        pageSize: Number(pageSize) || 10
+        pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc'
     }); 
 
     res.status(StatusCodes.OK).json(result)
+};
+
+const addContacListToMailingAutomation = async (req: Request, res: Response) => {
+    const { listId, mailingAutomationId } = req.body;
+    
+    const result = await ContactsListsService.addContacListToMailingAutomation(listId, mailingAutomationId);
+
+    res.status(StatusCodes.OK).json(result);
+}
+
+const syncMembersEqDate = async (req: Request, res: Response) => {
+    const id = req.params.id;
+
+    const result = await ContactsListsService.syncMembersEqDate(id);
+    
+    res.status(StatusCodes.OK).json(result);
 };
 
 export default {
     createContactsList: ExceptionInterceptor(createContactsList),
     updateContactListById: ExceptionInterceptor(updateContactListById),
     deleteContactsListById: ExceptionInterceptor(deleteContactsListById),
-    getListContactsLists: ExceptionInterceptor(getListContactsLists)
+    getListContactsLists: ExceptionInterceptor(getListContactsLists),
+    addContacListToMailingAutomation: ExceptionInterceptor(addContacListToMailingAutomation)
 };

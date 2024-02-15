@@ -35,11 +35,12 @@ const updateContactById = async (req, res) => {
     res.status(http_status_codes_1.StatusCodes.OK).json(updatedContactData);
 };
 const getContactList = async (req, res) => {
-    const { search, page, pageSize, listIds } = req.query;
+    const { search, page, pageSize, sortOrder, listIds } = req.query;
     const result = await contacts_service_1.default.getContactList({
         search: search || '',
         page: Number(page) || 1,
         pageSize: Number(pageSize) || 10,
+        sortOrder: sortOrder === 'asc' ? 'asc' : 'desc',
         listIds: Array.isArray(listIds) ? listIds : (typeof listIds === 'string' ? [listIds] : [])
     });
     res.status(http_status_codes_1.StatusCodes.OK).json(result);
