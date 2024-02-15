@@ -2,7 +2,7 @@ import NodeCache from 'node-cache';
 import { Contact } from '@prisma/client';
 
 import PlaceholderReplacer from './placeholder-replacer';
-import MailTemplatesGoogleDriveSerive from '../../services/google-services/mail-templates.driver-service';
+import MailTemplatesGoogleDriveSerive from '../../google-services/google-drive/services/mail-templates.google-service';
 
 import prismaClient from '../../../database/prisma-client';
 
@@ -23,8 +23,6 @@ const getTemplateMailTextByTemplateId = async (mailTemplateId: string): Promise<
 
     const mailTemplateData = await prismaClient.mailTemplate.findUnique({ where: { id: mailTemplateId } });
     const mailTemplateText = await MailTemplatesGoogleDriveSerive.getMailTemplateFileDataById(mailTemplateData.googleDriveFileId);
-
-    
 
     templateMailTextCache.set(mailTemplateId, mailTemplateText);
 

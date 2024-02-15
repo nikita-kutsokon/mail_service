@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { Prisma, Contact } from '@prisma/client';
 
-import MailSenderService from '../../mailing-service';
+import MailSenderService from '../../mailing-service/mail-sender';
 import ContacService from '../../../api/services/contacts.service';
 import LocationDeterminationService from '../../location-determination-service'
 

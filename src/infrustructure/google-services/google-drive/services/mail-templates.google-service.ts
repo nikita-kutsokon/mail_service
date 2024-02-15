@@ -1,11 +1,8 @@
 import { Readable } from 'stream';
-import { google } from 'googleapis';
 import fileUpload from 'express-fileupload';
 
-import OAuth2GoogleClient from './auth-google-client';
+import googleDriveProvider from '../providers';
 
-
-const googleDriveClient = google.drive({ version: 'v3', auth: OAuth2GoogleClient });
 
 const createNewMailTemplateFile = async (templateName: string, templateFile: fileUpload.UploadedFile) => {
     const templateFileStream = new Readable();
@@ -13,11 +10,11 @@ const createNewMailTemplateFile = async (templateName: string, templateFile: fil
     templateFileStream.push(templateFile.data);
     templateFileStream.push(null);
 
-    const createdFile = await googleDriveClient.files.create({
+    const createdFile = await googleDriveProvider.files.create({
         requestBody: {
             name: templateName,
             mimeType: 'text/html',
-            parents: ['183Sg_7KPVGeqZT_1nT4GTq9Y43gw88uB'],
+            parents: [ process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID_WITH_MAIL_TEMPLATES ],
         },
         media: {
             mimeType: 'text/html',
@@ -29,7 +26,7 @@ const createNewMailTemplateFile = async (templateName: string, templateFile: fil
 };
 
 const getMailTemplateFileDataById = async (fileId: string) => {
-    const response = await googleDriveClient.files.get(
+    const response = await googleDriveProvider.files.get(
         { fileId: fileId, alt: 'media' },
         { responseType: 'stream' }
     );
@@ -38,29 +35,25 @@ const getMailTemplateFileDataById = async (fileId: string) => {
         let data = '';
         response.data
             .on('data', chunk => data += chunk)
-            .on('end', () => {
-                resolve(data);
-            })
-        //TODO: Handle error while reading file
+            .on('end', () => resolve(data))
+            .on('error', reject);
     });
 };
 
 const updateMailTemplateFileById = async (fileId: string, data: string) => {
-    const updatedFile = await googleDriveClient.files.update({
+    const updatedFile = await googleDriveProvider.files.update({
         fileId: fileId,
         media: {
             mimeType: 'text/html',
             body: data
         }
     });
-    console.log(updatedFile)
+    
     return updatedFile;
 };
 
 const deleteMailTemplateFileById = async (fileId: string) => {
-    const deletedFile = await googleDriveClient.files.delete({
-        fileId: fileId,
-    });
+    const deletedFile = await googleDriveProvider.files.delete({ fileId });
     
     return deletedFile;
 };

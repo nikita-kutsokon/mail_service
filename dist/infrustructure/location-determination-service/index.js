@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const getContactLocationByIpAddress = async (ip) => {
-    console.log('start defenition location with ip', ip);
     if (!ip)
         return undefined;
     try {

@@ -29,8 +29,12 @@ router.put(
 );
 
 router.post(
-    '/:id/add-to-automation/:automationId', 
-    isValidId,
+    '/add-to-automation', 
+    ContactsListsController.addContacListToMailingAutomation
+);
+
+router.post(
+    '/:id/sync-members-eq-date', 
     ContactsListsController.addContacListToMailingAutomation
 )
 

@@ -28,8 +28,24 @@ app.use('/action', contact_actions_router_1.default);
 app.use(router_1.default);
 // app.use("/contact-form-creation", ContactFormCreation)
 app.use('/action', contact_actions_router_1.default);
+const moment_1 = __importDefault(require("moment"));
+const generateEqTimestampFieldBasedOnEqSelectedDate = (contactData, date) => {
+    const momentDate = (0, moment_1.default)(date);
+    const formatedDate = momentDate.tz(contactData.timezone).format('MMMM DD, YYYY HH:mm');
+    return `${formatedDate} ${contactData.timezone}`;
+};
 app.use('/test', async (req, res) => {
-    res.json({ message: "good" });
+    const { contactIds } = await prismaClient.contactstList.findUnique({ where: { id: '65b3888f9f2fc3e417c3bc6f' } });
+    // const { contactIds } = await prismaClient.contactstList.findUnique({ where: { id: '65b3888f9f2fc3e417c3bc6f'}});
+    // for (const contactId of contactIds) {
+    //   const contactData = await prismaClient.contact.findUnique({ where: { id: contactId } });
+    //   const updatingData = await prismaClient.contact.update({ where: {id: contactId}, data: {
+    //     eduQuestSelectedDateTime: '2024-02-16T14:00:00.000+00:00',
+    //     eduQuestEventTimestamp: generateEqTimestampFieldBasedOnEqSelectedDate(contactData, '2024-02-16T14:00:00.000+00:00')
+    //   } });
+    //   console.log(updatingData);
+    // }
+    // res.status(200).json({ messege: 'Ok' });
 });
 (0, cron_jobs_1.default)();
 app.use(prisma_error_handler_1.default);

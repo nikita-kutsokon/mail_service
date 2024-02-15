@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const prisma_client_1 = __importDefault(require("../../database/prisma-client"));
+const timestamp_generator_1 = __importDefault(require("../../utils/helpers/dynamic-fields-generators/timestamp.generator"));
 const createContactsList = async (contactListData) => {
     const result = await prisma_client_1.default.contactstList.create({ data: contactListData });
     return result;
@@ -68,11 +69,25 @@ const addContacListToMailingAutomation = async (listId, mailingAutomationId) => 
     const result = await prisma_client_1.default.contactMailingAutomation.createMany({ data: connectData });
     return result;
 };
+const syncMembersEqDate = async (listId) => {
+    const { contactIds, eduQuestStartDate: listEqData } = await prisma_client_1.default.contactstList.findUnique({ where: { id: listId } });
+    const contactData = await prisma_client_1.default.contact.findMany({ where: { id: { in: contactIds } } });
+    const recordsToUpdate = contactData.map(targetContactData => ({
+        where: { id: targetContactData.id },
+        data: {
+            eduQuestSelectedDateTime: listEqData,
+            eduQuestEventTimestamp: (0, timestamp_generator_1.default)(targetContactData)
+        }
+    }));
+    const result = await prisma_client_1.default.contact.updateMany({ data: recordsToUpdate });
+    return result;
+};
 exports.default = {
     createContactsList,
     updateContactListById,
     deleteContactsListById,
     getListContactsLists,
-    addContacListToMailingAutomation
+    addContacListToMailingAutomation,
+    syncMembersEqDate
 };
 //# sourceMappingURL=contacts-lists.service.js.map

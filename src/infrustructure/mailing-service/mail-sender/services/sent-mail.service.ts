@@ -1,7 +1,7 @@
 import { v5 as uuidv5 } from 'uuid';
 import { SentMail } from '@prisma/client';
 
-import prismaClient from '../../../database/prisma-client';
+import prismaClient from '../../../../database/prisma-client';
 
 
 const createRecord = async (mailData: Omit<SentMail, 'emailId' | 'id' | 'sentDate'>) => {

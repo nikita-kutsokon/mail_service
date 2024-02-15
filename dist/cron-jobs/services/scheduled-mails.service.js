@@ -17,7 +17,6 @@ const retrievePendingMails = async () => {
     return pendingMails;
 };
 const deletePendingMail = async (id) => {
-    console.log('Try to delete');
     const mail = await prisma_client_1.default.scheduledMail.delete({
         where: {
             id,

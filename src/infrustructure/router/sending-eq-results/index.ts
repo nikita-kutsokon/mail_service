@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { EduQuestDecision } from '@prisma/client';
 
 import eqDecisionTemplatesConfig from './config';
@@ -15,20 +16,21 @@ interface EqDecisionsData {
     contactsDecisions: ContactEqDecision[];
 };
 
-const handleEqResultsForContacts = async ({ eventType, contactsDecisions }: EqDecisionsData) => {
+const processContactsEqDecision = async ({ eventType, contactsDecisions }: EqDecisionsData) => {
     const groupedContactIdsByEqDecisions = await getGroupedContactsIdsByEduQuestDecision(contactsDecisions);
 
     const updatingDecisionResult = await updateContactsEqDecisons(groupedContactIdsByEqDecisions);
-    //TODO: maybe this call is sync with code above
     const scheduledDesicionMailsResult = await scheduleMailsWithEqDecisions(eventType, groupedContactIdsByEqDecisions);
+    // const unsubscribtionSelectedContactsResult = await unsibscibeSelectedContactsFromMailing()
 
-    
+    return scheduledDesicionMailsResult;
 };
 
 const scheduleMailsWithEqDecisions = async (eventType: eqEventType, groupedContactsIdsByEduQuestDecision: Record<string, string[]>) => {
-    await Promise.all(
+    const scheduledMailsResult = await Promise.all(
         Object.entries(groupedContactsIdsByEduQuestDecision).map(async ([eduQuestDecisionString, contactIds]) => {
             const eduQuestDecision = eduQuestDecisionString as EduQuestDecision;
+            
             const targetTemplateId = eqDecisionTemplatesConfig[`${eventType}_${eduQuestDecision}`];
 
             const recordsToCreate = contactIds.map(contactId => {
@@ -36,17 +38,21 @@ const scheduleMailsWithEqDecisions = async (eventType: eqEventType, groupedConta
                     contactId: contactId,
                     useContactTimezone: false,
                     templateId: targetTemplateId,
-                    scheduledDate: Date.now().toString(),
+                    scheduledDate: moment.utc().format(),
                 };
             });
+
+            console.log(recordsToCreate.length);
 
             await prismaClient.scheduledMail.createMany({ data: recordsToCreate });
         })
     );
+
+    return scheduledMailsResult;
 };
 
 const updateContactsEqDecisons = async (groupedContactsIdsByEduQuestDecision: Record<string, string[]>) => {
-    await Promise.all(
+    const updatingResult = await Promise.all(
         Object.entries(groupedContactsIdsByEduQuestDecision).map(async ([eduQuestDecisionString, contactIds]) => {
             const eduQuestDecision = eduQuestDecisionString as EduQuestDecision;
 
@@ -56,19 +62,43 @@ const updateContactsEqDecisons = async (groupedContactsIdsByEduQuestDecision: Re
             });
         })
     );
+
+    return updatingResult;
 };
 
+const unsibscibeSelectedContactsFromMailing = async (groupedContactsIdsByEduQuestDecision: Record<string, string[]>) => {
+    const targetContactsids = groupedContactsIdsByEduQuestDecision[EduQuestDecision.SELECTED];
+
+    const updatingResults = await prismaClient.contact.updateMany({
+        where: {
+            id: { in: targetContactsids }
+        },
+        data: {
+            isSubscribed: false
+        }
+    });
+
+    return updatingResults;
+};
+
+
 const getGroupedContactsIdsByEduQuestDecision = async (data: ContactEqDecision[]): Promise<Record<string, string[]>> => {
-    const result = data.reduce(async (acc, { contactEmail, eduQuestDecision }) => {
-        if (!acc[eduQuestDecision]) {
-            acc[eduQuestDecision] = [];
+    const result: Record<string, string[]> = {};
+
+    for (const { contactEmail, eduQuestDecision } of data) {
+        if (!result[eduQuestDecision]) {
+            result[eduQuestDecision] = [];
         }
 
-        const { id } = await prismaClient.contact.findUnique({ where: { email: contactEmail } });
-        acc[eduQuestDecision].push(id);
+        const contact = await prismaClient.contact.findUnique({ where: { email: contactEmail } });
+        if (contact && contact.id) {
+            result[eduQuestDecision].push(contact.id);
+        }
+    }
 
-        return acc;
-    }, {});
+    console.log(result);
 
     return result;
 };
+
+export default processContactsEqDecision;

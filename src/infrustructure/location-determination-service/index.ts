@@ -5,7 +5,6 @@ interface LocationData {
 }
 
 const getContactLocationByIpAddress = async (ip: string): Promise<LocationData | undefined> => {
-    console.log('start defenition location with ip', ip);
     if (!ip) return undefined;
     
     try {

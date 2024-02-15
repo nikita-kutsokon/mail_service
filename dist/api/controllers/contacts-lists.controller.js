@@ -32,11 +32,14 @@ const getListContactsLists = async (req, res) => {
     res.status(http_status_codes_1.StatusCodes.OK).json(result);
 };
 const addContacListToMailingAutomation = async (req, res) => {
-    const listid = '65b2cb4d9f9f640b8b5baa64';
-    const automationId = '65b9fe185ae823c8a92559d9';
-    console.log(automationId);
-    const result = await contacts_lists_service_1.default.addContacListToMailingAutomation(listid, automationId);
-    res.status(http_status_codes_1.StatusCodes.OK).send(result);
+    const { listId, mailingAutomationId } = req.body;
+    const result = await contacts_lists_service_1.default.addContacListToMailingAutomation(listId, mailingAutomationId);
+    res.status(http_status_codes_1.StatusCodes.OK).json(result);
+};
+const syncMembersEqDate = async (req, res) => {
+    const id = req.params.id;
+    const result = await contacts_lists_service_1.default.syncMembersEqDate(id);
+    res.status(http_status_codes_1.StatusCodes.OK).json(result);
 };
 exports.default = {
     createContactsList: (0, exception_interceptor_middleware_1.default)(createContactsList),

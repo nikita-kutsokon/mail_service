@@ -1,8 +1,9 @@
-import prismaClient from '../../../../database/prisma-client';
-
 const eqDecisionTemplatesConfig = {
-    'SELECTED': '65bf6625574a0a509b4d2f62',
-    'ENGLISH_ISSUE': '65bf66b0574a0a509b4d2f63',
+    'MAIN_SELECTED': '65bf6625574a0a509b4d2f62',
+    'BACKUP_SELECTED': '65bf6625574a0a509b4d2f62',
+
+    'MAIN_ENGLISH_ISSUE': '65bf6625574a0a509b4d2f62',
+    'BACKUP_ENGLISH_ISSUE': '65bf66b0574a0a509b4d2f63',
 
     'MAIN_TRY_AGAIN': '65bf645d574a0a509b4d2f5f',
     'BACKUP_TRY_AGAIN': '65bf643e574a0a509b4d2f5e',

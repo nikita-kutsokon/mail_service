@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_cache_1 = __importDefault(require("node-cache"));
 const placeholder_replacer_1 = __importDefault(require("./placeholder-replacer"));
-const mail_templates_driver_service_1 = __importDefault(require("../../services/google-services/mail-templates.driver-service"));
+const mail_templates_google_service_1 = __importDefault(require("../../google-services/google-drive/services/mail-templates.google-service"));
 const prisma_client_1 = __importDefault(require("../../../database/prisma-client"));
 const templateMailTextCache = new node_cache_1.default({ stdTTL: 900 });
 const composeMail = async (contactData, mailTemplateId) => {
@@ -19,7 +19,7 @@ const getTemplateMailTextByTemplateId = async (mailTemplateId) => {
     }
     ;
     const mailTemplateData = await prisma_client_1.default.mailTemplate.findUnique({ where: { id: mailTemplateId } });
-    const mailTemplateText = await mail_templates_driver_service_1.default.getMailTemplateFileDataById(mailTemplateData.googleDriveFileId);
+    const mailTemplateText = await mail_templates_google_service_1.default.getMailTemplateFileDataById(mailTemplateData.googleDriveFileId);
     templateMailTextCache.set(mailTemplateId, mailTemplateText);
     return mailTemplateText;
 };

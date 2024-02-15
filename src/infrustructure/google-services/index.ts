@@ -1,1 +1,1 @@
-export * as GoogleDriveMailTemplatesService from './google-drive/services/mail-templates';
+export * as GoogleDriveMailTemplatesService from './google-drive/services/mail-templates.google-service';

@@ -1,6 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prismaClient from '../../database/prisma-client';
 
+import generateEqTimestampFieldBasedOnEqSelectedDate from '../../utils/helpers/dynamic-fields-generators/timestamp.generator';
+
 
 const createContactsList = async (contactListData: Prisma.ContactstListCreateInput) => {
     const result = await prismaClient.contactstList.create({ data: contactListData });
@@ -80,10 +82,29 @@ const addContacListToMailingAutomation = async (listId: string, mailingAutomatio
     return result;
 };
 
+const syncMembersEqDate = async (listId: string) => {
+    const { contactIds, eduQuestStartDate: listEqData } = await prismaClient.contactstList.findUnique({ where: { id: listId } });
+
+    const contactData = await prismaClient.contact.findMany({ where: { id: { in: contactIds } } });
+
+    const recordsToUpdate = contactData.map(targetContactData => ({
+        where: { id: targetContactData.id },
+        data: {
+            eduQuestSelectedDateTime: listEqData,
+            eduQuestEventTimestamp: generateEqTimestampFieldBasedOnEqSelectedDate(targetContactData)
+        }
+    }));
+
+    const result = await prismaClient.contact.updateMany({ data: recordsToUpdate });
+
+    return result;
+};
+
 export default {
     createContactsList,
     updateContactListById,
     deleteContactsListById,
     getListContactsLists,
-    addContacListToMailingAutomation
+    addContacListToMailingAutomation,
+    syncMembersEqDate
 };

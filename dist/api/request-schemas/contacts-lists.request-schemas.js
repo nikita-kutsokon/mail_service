@@ -12,8 +12,13 @@ const updateResourseSchema = joi_1.default.object({
     name: joi_1.default.string(),
     eduQuestStartDate: joi_1.default.date().iso(),
 });
+const addRecordContactsToMailingAutomationSchema = joi_1.default.object({
+    listId: joi_1.default.string().required(),
+    mailingAutomationId: joi_1.default.string().required()
+});
 exports.default = {
     createResourseSchema,
-    updateResourseSchema
+    updateResourseSchema,
+    addRecordContactsToMailingAutomationSchema
 };
 //# sourceMappingURL=contacts-lists.request-schemas.js.map
